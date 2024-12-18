@@ -8,12 +8,11 @@ import { Select, TextInput, Text, Button, Loader } from "@mantine/core";
 const EditDiagnoses = () => {
     const { token } = useAuth();
     const navigate = useNavigate();
-    const { id } = useParams(); // Get the diagnosis ID from the URL params
+    const { id } = useParams();
 
     const [patients, setPatients] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Initialize form with empty values
     const form = useForm({
         initialValues: {
             patient_id: '',
@@ -27,7 +26,6 @@ const EditDiagnoses = () => {
         },
     });
 
-    // Fetch patients and the diagnosis details
     useEffect(() => {
         const fetchPatients = async () => {
             try {
@@ -47,7 +45,6 @@ const EditDiagnoses = () => {
                 });
                 const diagnosis = res.data;
 
-                // Set form values for the diagnosis once fetched
                 form.setValues({
                     patient_id: diagnosis.patient_id || '',
                     condition: diagnosis.condition || '',
@@ -55,10 +52,10 @@ const EditDiagnoses = () => {
                         ? new Date(diagnosis.diagnosis_date).toISOString().split('T')[0]
                         : '',
                 });
-                setLoading(false);  // Stop loading once data is fetched
+                setLoading(false);  
             } catch (e) {
                 console.error("Error fetching diagnosis:", e);
-                // Navigate with a message if diagnosis is not found
+
                 if (e.response && e.response.status === 404) {
                     navigate('/diagnoses', { state: { msg: 'Diagnosis not found!' } });
                 }
@@ -68,20 +65,19 @@ const EditDiagnoses = () => {
 
         fetchPatients();
         fetchDiagnosis();
-    }, [id, token, navigate]); // Trigger fetching once, no need for dependency on form
+    }, [id, token, navigate]); 
 
-    // Handle form submission to update the diagnosis
+
     const handleSubmit = () => {
         const formattedDate = new Date(form.values.diagnosis_date).toISOString().split('T')[0];
         
         const diagnosisData = {
-            id: id, // Keep the id in the request body (important to match API format)
+            id: id, 
             patient_id: parseInt(form.values.patient_id, 10),
             condition: form.values.condition,
-            diagnosis_date: formattedDate, // Ensure the date format is correct
+            diagnosis_date: formattedDate,
         };
     
-        // Make PATCH request to update the diagnosis
         axios.patch(`https://fed-medical-clinic-api.vercel.app/diagnoses/${id}`, diagnosisData, {
             headers: { Authorization: `Bearer ${token}` },
         })
@@ -99,7 +95,7 @@ const EditDiagnoses = () => {
         });
     };
 
-    // Display loading state while fetching data
+    // Display loading while fetching data
     if (loading) return <Loader />;
 
     return (

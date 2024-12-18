@@ -67,10 +67,9 @@ const AllDiagnoses = () => {
     // Helper function to format dates
     const formatDate = (dateString) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString(); // You can adjust the format here as needed
+        return date.toLocaleDateString(); 
     };
-
-    // Handle row click for editing
+    
     const handleRowClick = (diagnosisId) => {
         navigate(`/diagnoses/${diagnosisId}/edit`);
     };
